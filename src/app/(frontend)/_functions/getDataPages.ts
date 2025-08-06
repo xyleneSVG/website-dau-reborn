@@ -2,7 +2,7 @@
 
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { CACHE_EXPIRED_2_MIN, client } from "@/app/lib/redis"
+import { CACHE_EXPIRED_2_MIN, client, connectRedis } from "@/app/lib/redis"
 
 export async function getDataPages(pathWithQuery: string) {
   const payload = await getPayload({ config: await configPromise })
@@ -13,24 +13,42 @@ export async function getDataPages(pathWithQuery: string) {
   const locale = (['en', 'id'].includes(rawLocale) ? rawLocale : 'id') as 'en' | 'id'
 
   const cacheKey = `pageCache:${pathname}:${locale}`
+  console.log(cacheKey)
 
-  const resultRedistCache = await client.get(cacheKey)
+  try {
+    await connectRedis()
 
-  if (resultRedistCache) {
-    return JSON.parse(resultRedistCache)
+    const resultRedistCache = await client.get(cacheKey)
+
+    if (resultRedistCache) {
+      console.log("cache page ditemukan")
+      // console.log(JSON.stringify(resultRedistCache))
+      return JSON.parse(resultRedistCache)
+    }
+
+    const resultFind = await payload.find({
+      collection: 'pages',
+      where: { pageKey: { equals: pathname } },
+      sort: 'createdAt',
+      limit: 1,
+      locale,
+    })
+
+    await client.set(cacheKey, JSON.stringify(resultFind.docs), {
+      EX: CACHE_EXPIRED_2_MIN,
+    })
+
+    return resultFind.docs
+  } catch (err) {
+    console.error('❌ Redis Error:', err)
+    const resultFind = await payload.find({
+      collection: 'pages',
+      where: { pageKey: { equals: pathname } },
+      sort: 'createdAt',
+      limit: 1,
+      locale,
+    })
+
+    return resultFind.docs
   }
-
-  const resultFind = await payload.find({
-    collection: 'pages',
-    where: { pageKey: { equals: pathname } },
-    sort: 'createdAt',
-    limit: 1,
-    locale,
-  })
-
-  await client.set(cacheKey, JSON.stringify(resultFind.docs), {
-    EX: CACHE_EXPIRED_2_MIN,
-  })
-
-  return resultFind.docs
 }

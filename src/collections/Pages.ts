@@ -1,5 +1,6 @@
 // modules
 import { APIError, CollectionConfig } from 'payload'
+import { client, connectRedis } from '@/app/lib/redis'
 
 // block
 import { HeroSection } from './block-layouts/HeroSection'
@@ -200,6 +201,32 @@ export const Pages: CollectionConfig = {
         // console.log('BeforeValidate Hook Triggered');
         // console.log(JSON.stringify(data, null, 2));
         return data
+      },
+    ],
+    afterChange: [
+      async ({ doc }) => {
+        try {
+          await connectRedis()
+
+          const slug = doc.pageName
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim()
+
+          const pathname = doc.pageGroup ? `/${doc.pageGroup}/${slug}` : `/${slug}`
+
+          const cacheKeyId = `pageCache:${pathname}:id`
+          const cacheKeyEn = `pageCache:${pathname}:en`
+
+          await client.del(cacheKeyId)
+          await client.del(cacheKeyEn)
+
+          console.log(`✅ Redis cache updated: ${cacheKeyId} and ${cacheKeyEn}`)
+        } catch (err) {
+          console.error('❌ Redis cache error:', err)
+        }
       },
     ],
   },

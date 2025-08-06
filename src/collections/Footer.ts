@@ -1,3 +1,4 @@
+import { client, connectRedis } from '@/app/lib/redis'
 import { APIError, CollectionConfig } from 'payload'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -108,6 +109,21 @@ export const Footer: CollectionConfig = {
               400,
             )
           }
+        }
+      },
+    ],
+    afterChange: [
+      async () => {
+        try {
+          await connectRedis()
+          const cacheKeyId = `footerCache:id`
+          const cacheKeyEn = `footerCache:en`
+          await client.del(cacheKeyId)
+          await client.del(cacheKeyEn)
+
+          console.log(`✅ Redis cache updated: ${cacheKeyId} and ${cacheKeyEn}`)
+        } catch (err) {
+          console.error('❌ Redis cache error:', err)
         }
       },
     ],

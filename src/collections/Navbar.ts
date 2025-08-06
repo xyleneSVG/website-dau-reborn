@@ -1,4 +1,5 @@
 import { customLucideIcon } from '@/admin/_fields/listIcon'
+import { client, connectRedis } from '@/app/lib/redis'
 import { colorPickerField } from '@innovixx/payload-color-picker-field'
 import { iconPickerField } from '@innovixx/payload-icon-picker-field'
 import { APIError, CollectionConfig } from 'payload'
@@ -152,6 +153,21 @@ export const Navbar: CollectionConfig = {
               400,
             )
           }
+        }
+      },
+    ],
+    afterChange: [
+      async () => {
+        try {
+          await connectRedis()
+          const cacheKeyId = `navbarCache:id`
+          const cacheKeyEn = `navbarCache:en`
+          await client.del(cacheKeyId)
+          await client.del(cacheKeyEn)
+
+          console.log(`✅ Redis cache updated: ${cacheKeyId} and ${cacheKeyEn}`)
+        } catch (err) {
+          console.error('❌ Redis cache error:', err)
         }
       },
     ],

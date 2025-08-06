@@ -1,0 +1,10 @@
+1: implementasi redis collection hook (done)
+2: switch case banyak ganti implementasi pakai object atau yang lain
+
+Example masukan 2:
+const componenets = {
+  myComponent1: componenets,
+
+}
+
+components[key](args)
