@@ -67,26 +67,36 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    pages: Page;
+    navbar: Navbar;
+    footer: Footer;
+    reciveMessage: ReciveMessage;
     users: User;
     media: Media;
+    groupPage: GroupPage;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
+    pages: PagesSelect<false> | PagesSelect<true>;
+    navbar: NavbarSelect<false> | NavbarSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+    reciveMessage: ReciveMessageSelect<false> | ReciveMessageSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    groupPage: GroupPageSelect<false> | GroupPageSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   globals: {};
   globalsSelect: {};
-  locale: null;
+  locale: 'en' | 'id';
   user: User & {
     collection: 'users';
   };
@@ -115,10 +125,697 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  pageName: string;
+  /**
+   * Enable if this page will be located at "https:{domain}/" (make sure there is no other page as the default page)
+   */
+  pageDefault?: boolean | null;
+  pageKey?: string | null;
+  /**
+   * Example: https://{domain}/{Group}/{This Page}
+   */
+  pageGroup?: (number | null) | GroupPage;
+  pageSection?:
+    | (
+        | HeroSection
+        | ZigZagListsSection
+        | ImageWithCarouselSection
+        | QuadGridSection
+        | ImageGridCarouselSection
+        | ContactSection
+        | LayeredTextOnImageSection
+        | IllustrationWithTextAndCarouselSection
+        | ImageHeaderParagraphSection
+        | ImageHeaderThreeColumnSection
+        | CircleImageGridSection
+        | TextWithImageClusterSection
+        | LoopingCarouselSection
+        | ListWithIconSection
+        | TextAlignCenterSection
+        | ListWithIconAndDescriptionSection
+        | TwoListWithIllustrationSection
+        | TextGridSection
+        | IconListWithSideImagesSection
+        | CardWithImageSection
+        | IconTextListWithImageSection
+        | DCarouselSection
+        | GridImageSection
+      )[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "groupPage".
+ */
+export interface GroupPage {
+  id: number;
+  groupName: string;
+  groupKey?: string | null;
+  subGroupFrom?: (number | null) | GroupPage;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Hero Section".
+ */
+export interface HeroSection {
+  greetingIllustrationLeft: number | Media;
+  greetingIllustrationRight: number | Media;
+  greetings: {
+    hasIncludeImage?: boolean | null;
+    imageGreeting?: (number | null) | Media;
+    textGreeting: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Zig Zag Lists Section".
+ */
+export interface ZigZagListsSection {
+  sectionTitle: string;
+  sectionSubtitle: string;
+  contentLists: {
+    contentListTitle: string;
+    contentListDescription: string;
+    contentListIcon: number | Media;
+    /**
+     * Select the page that explains about this service (make sure the page already exists)
+     */
+    contentReferencePage?: (number | null) | Page;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'zigZagListSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Image With Carousel Section".
+ */
+export interface ImageWithCarouselSection {
+  sectionTitle: string;
+  sectionDescription: string;
+  sectionIllustration: number | Media;
+  backgroundColor: string;
+  carouselImage: {
+    itemImage: number | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageWithCarouselSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Quad Grid Section".
+ */
+export interface QuadGridSection {
+  sectionTitle: string;
+  sectionSubtitle: string;
+  gridLists: {
+    itemImage: number | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'quadGridSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Image Grid Carousel Section".
+ */
+export interface ImageGridCarouselSection {
+  sectionTitle: string;
+  gridLists: {
+    itemImage: number | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageGridCarouselSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Contact Section".
+ */
+export interface ContactSection {
+  sectionIllustration: number | Media;
+  sectionLabel: string;
+  sectionHeadline: string;
+  sectionDescription: string;
+  buttonSectionColor?: string | null;
+  fieldsForm: {
+    fieldLayout: 'single' | 'double';
+    fieldId: string;
+    fieldLabel: string;
+    fieldTypeSingle?: ('text' | 'number' | 'email' | 'textarea' | 'radio') | null;
+    fieldPlaceholder?: string | null;
+    fieldTypeDouble?: ('text' | 'email' | 'number') | null;
+    fieldRequired?: boolean | null;
+    fieldRadioOptions?:
+      | {
+          optionRadioValue: string;
+          optionRadioLabel: string;
+          id?: string | null;
+        }[]
+      | null;
+    subFields?:
+      | {
+          subFieldId: string;
+          subFieldLabel: string;
+          subFieldPlaceholder: string;
+          subFieldType: 'text' | 'email' | 'number';
+          subFieldRequired?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Layered Text On Image Section".
+ */
+export interface LayeredTextOnImageSection {
+  sectionTitle: string;
+  sectionSubtitle: string;
+  sectionBackground: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'layeredTextOnImageSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Illustration With Text and Carousel Section".
+ */
+export interface IllustrationWithTextAndCarouselSection {
+  sectionTitle: string;
+  sectionDescription: string;
+  carouselLists: {
+    carouselImage: number | Media;
+    carouselTitle: string;
+    carouselDescription: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'illustrationWithTextAndCarouselSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Image Header Paragraph Section".
+ */
+export interface ImageHeaderParagraphSection {
+  sectionImage: number | Media;
+  sectionTitle: string;
+  sectionParagraph?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageHeaderParagraphSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Image Header Three Column Section".
+ */
+export interface ImageHeaderThreeColumnSection {
+  sectionHeaderImage: number | Media;
+  sectionTitle: string;
+  sectionSubtitle: string;
+  /**
+   * Add 3 Grid
+   */
+  gridLists?:
+    | {
+        itemTitle: string;
+        itemDescription: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageHeaderThreeColumnSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Circle Image Grid Section".
+ */
+export interface CircleImageGridSection {
+  sectionTitle: string;
+  gridLists?:
+    | {
+        itemImage: number | Media;
+        itemName: string;
+        itemDescription: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'circleImageGridSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Text With Image Cluster Section".
+ */
+export interface TextWithImageClusterSection {
+  /**
+   * Max 3 image
+   */
+  imageLists: {
+    itemImage: number | Media;
+    id?: string | null;
+  }[];
+  sectionHeadline?: string | null;
+  sectionTitle: string;
+  sectionDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  hasButton?: boolean | null;
+  buttonText?: string | null;
+  buttonIcon?: string | null;
+  buttonLink?: (number | null) | Page;
+  /**
+   * Choose a color for this button
+   */
+  buttonColor?: string | null;
+  reverseContent?: boolean | null;
+  hasBackground?: boolean | null;
+  /**
+   * Choose a color for this background page
+   */
+  backgroundColor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'textWithImageClusterSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Looping Carousel Section".
+ */
+export interface LoopingCarouselSection {
+  sectionTitle: string;
+  carouselLists: {
+    itemImage: number | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'loopingCarouselSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "List With Icon Section".
+ */
+export interface ListWithIconSection {
+  sectionTitle: string;
+  /**
+   * Choose a color for this background page
+   */
+  backgroundPageColor?: string | null;
+  contentLists?:
+    | {
+        contentIcon: string;
+        contentName: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Choose a color for this icon
+   */
+  iconColor?: string | null;
+  /**
+   * Choose a color for this background icon
+   */
+  backgroundIconColor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'listWithIconSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Text Align Center Section".
+ */
+export interface TextAlignCenterSection {
+  sectionTitle: string;
+  sectionDescription: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'textAlignCenterSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "List With Icon and Description Section".
+ */
+export interface ListWithIconAndDescriptionSection {
+  sectionTitle: string;
+  /**
+   * Choose a color for this background page
+   */
+  backgroundPageColor?: string | null;
+  contentLists: {
+    contentIcon: string;
+    contentName: string;
+    contentDescription: string;
+    id?: string | null;
+  }[];
+  /**
+   * Choose a color for this icon
+   */
+  iconColor?: string | null;
+  /**
+   * Choose a color for this background icon
+   */
+  backgroundIconColor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'listWithIconDescriptionSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Two List With Illustration Section".
+ */
+export interface TwoListWithIllustrationSection {
+  sectionTitle: string;
+  sectionDescription: string;
+  sectionIllustration: number | Media;
+  leftSideListTitle: string;
+  leftSideListTitleColor: string;
+  leftSideListContentArray?:
+    | {
+        leftSideListContent: string;
+        id?: string | null;
+      }[]
+    | null;
+  leftSideListColor: string;
+  rightSideListTitle: string;
+  rightSideListTitleColor: string;
+  rightSideListContentArray?:
+    | {
+        rightSideListContent: string;
+        id?: string | null;
+      }[]
+    | null;
+  rightSideListColor: string;
+  hasButton?: boolean | null;
+  buttonText?: string | null;
+  buttonIcon?: string | null;
+  buttonLink?: (number | null) | Page;
+  /**
+   * Choose a color for this button
+   */
+  buttonColor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'twoListWithIllustrationSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Text Grid Section".
+ */
+export interface TextGridSection {
+  sectionTitle: string;
+  sectionDescription: string;
+  headerColor: string;
+  gridArray?:
+    | {
+        itemTitle: string;
+        itemDescription: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'textGridSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Icon List With Side Images Section".
+ */
+export interface IconListWithSideImagesSection {
+  sectionTitle: string;
+  sectionIllustrationArray: {
+    sectionIllustration: number | Media;
+    id?: string | null;
+  }[];
+  sectionContent: {
+    itemImage: number | Media;
+    itemTitle: string;
+    itemDescription: string;
+    id?: string | null;
+    blockName?: string | null;
+    blockType: 'contentItem';
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'iconListWithSideImagesSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Card With Image Section".
+ */
+export interface CardWithImageSection {
+  sectionTitle: string;
+  headerColor: string;
+  cardArray?:
+    | {
+        itemThumbnail: number | Media;
+        itemTitle: string;
+        itemDescription: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cardWithImageSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Icon Text List With Image Section".
+ */
+export interface IconTextListWithImageSection {
+  sectionTitle: string;
+  sectionIllustration: number | Media;
+  contentLists: {
+    itemIcon: string;
+    itemTitle: string;
+    itemDescription: string;
+    id?: string | null;
+    blockName?: string | null;
+    blockType: 'iconTextItem';
+  }[];
+  /**
+   * Choose a color for this icon
+   */
+  iconColor?: string | null;
+  /**
+   * Choose a color for this background icon
+   */
+  backgroundIconColor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'iconTextListWithImageSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "3D Carousel Section".
+ */
+export interface DCarouselSection {
+  sectionTitle?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Carousel items must be exactly 3
+   */
+  carouselItems: {
+    itemTitle: string;
+    itemDescription: string;
+    itemIcon: number | Media;
+    id?: string | null;
+    blockName?: string | null;
+    blockType: 'carouselItem';
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'threeDimensionCarouselSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Grid Image Section".
+ */
+export interface GridImageSection {
+  sectionTitle?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  gridImage?:
+    | {
+        image: number | Media;
+        imageDescription: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gridImageSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navbar".
+ */
+export interface Navbar {
+  id: number;
+  active?: boolean | null;
+  layoutNavbar?: string | null;
+  navbarLogo: number | Media;
+  navbarItemArray: {
+    navbarItemName: string;
+    navbarItemReference?: (number | null) | Page;
+    hasDropdown?: boolean | null;
+    navbarDropdown?:
+      | {
+          itemDropdownIcon: string;
+          itemDropdownTitle: string;
+          itemDropdownReference: number | Page;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+  accentColor?: string | null;
+  hasButtonContact?: boolean | null;
+  buttonContactReference?: (number | null) | Page;
+  buttonContactColor?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  active?: boolean | null;
+  layoutFooter?: string | null;
+  footerLogo: number | Media;
+  footerTitle: string;
+  footerDescription: string;
+  footerNavigation: {
+    navigationGroupTitle: string;
+    navigationGroupItem: {
+      navigationPageName: string;
+      navigationPageReference: number | Page;
+      id?: string | null;
+    }[];
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reciveMessage".
+ */
+export interface ReciveMessage {
+  id: number;
+  recivedData?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -139,42 +836,43 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: string;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'navbar';
+        value: number | Navbar;
+      } | null)
+    | ({
+        relationTo: 'footer';
+        value: number | Footer;
+      } | null)
+    | ({
+        relationTo: 'reciveMessage';
+        value: number | ReciveMessage;
+      } | null)
+    | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'groupPage';
+        value: number | GroupPage;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -184,10 +882,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -207,11 +905,569 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  pageName?: T;
+  pageDefault?: T;
+  pageKey?: T;
+  pageGroup?: T;
+  pageSection?:
+    | T
+    | {
+        heroSection?: T | HeroSectionSelect<T>;
+        zigZagListSection?: T | ZigZagListsSectionSelect<T>;
+        imageWithCarouselSection?: T | ImageWithCarouselSectionSelect<T>;
+        quadGridSection?: T | QuadGridSectionSelect<T>;
+        imageGridCarouselSection?: T | ImageGridCarouselSectionSelect<T>;
+        contactSection?: T | ContactSectionSelect<T>;
+        layeredTextOnImageSection?: T | LayeredTextOnImageSectionSelect<T>;
+        illustrationWithTextAndCarouselSection?: T | IllustrationWithTextAndCarouselSectionSelect<T>;
+        imageHeaderParagraphSection?: T | ImageHeaderParagraphSectionSelect<T>;
+        imageHeaderThreeColumnSection?: T | ImageHeaderThreeColumnSectionSelect<T>;
+        circleImageGridSection?: T | CircleImageGridSectionSelect<T>;
+        textWithImageClusterSection?: T | TextWithImageClusterSectionSelect<T>;
+        loopingCarouselSection?: T | LoopingCarouselSectionSelect<T>;
+        listWithIconSection?: T | ListWithIconSectionSelect<T>;
+        textAlignCenterSection?: T | TextAlignCenterSectionSelect<T>;
+        listWithIconDescriptionSection?: T | ListWithIconAndDescriptionSectionSelect<T>;
+        twoListWithIllustrationSection?: T | TwoListWithIllustrationSectionSelect<T>;
+        textGridSection?: T | TextGridSectionSelect<T>;
+        iconListWithSideImagesSection?: T | IconListWithSideImagesSectionSelect<T>;
+        cardWithImageSection?: T | CardWithImageSectionSelect<T>;
+        iconTextListWithImageSection?: T | IconTextListWithImageSectionSelect<T>;
+        threeDimensionCarouselSection?: T | DCarouselSectionSelect<T>;
+        gridImageSection?: T | GridImageSectionSelect<T>;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Hero Section_select".
+ */
+export interface HeroSectionSelect {
+  greetingIllustrationLeft?: boolean;
+  greetingIllustrationRight?: boolean;
+  greetings?:
+    | boolean
+    | {
+        hasIncludeImage?: boolean;
+        imageGreeting?: boolean;
+        textGreeting?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Zig Zag Lists Section_select".
+ */
+export interface ZigZagListsSectionSelect {
+  sectionTitle?: boolean;
+  sectionSubtitle?: boolean;
+  contentLists?:
+    | boolean
+    | {
+        contentListTitle?: boolean;
+        contentListDescription?: boolean;
+        contentListIcon?: boolean;
+        contentReferencePage?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Image With Carousel Section_select".
+ */
+export interface ImageWithCarouselSectionSelect {
+  sectionTitle?: boolean;
+  sectionDescription?: boolean;
+  sectionIllustration?: boolean;
+  backgroundColor?: boolean;
+  carouselImage?:
+    | boolean
+    | {
+        itemImage?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Quad Grid Section_select".
+ */
+export interface QuadGridSectionSelect {
+  sectionTitle?: boolean;
+  sectionSubtitle?: boolean;
+  gridLists?:
+    | boolean
+    | {
+        itemImage?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Image Grid Carousel Section_select".
+ */
+export interface ImageGridCarouselSectionSelect {
+  sectionTitle?: boolean;
+  gridLists?:
+    | boolean
+    | {
+        itemImage?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Contact Section_select".
+ */
+export interface ContactSectionSelect {
+  sectionIllustration?: boolean;
+  sectionLabel?: boolean;
+  sectionHeadline?: boolean;
+  sectionDescription?: boolean;
+  buttonSectionColor?: boolean;
+  fieldsForm?:
+    | boolean
+    | {
+        fieldLayout?: boolean;
+        fieldId?: boolean;
+        fieldLabel?: boolean;
+        fieldTypeSingle?: boolean;
+        fieldPlaceholder?: boolean;
+        fieldTypeDouble?: boolean;
+        fieldRequired?: boolean;
+        fieldRadioOptions?:
+          | boolean
+          | {
+              optionRadioValue?: boolean;
+              optionRadioLabel?: boolean;
+              id?: boolean;
+            };
+        subFields?:
+          | boolean
+          | {
+              subFieldId?: boolean;
+              subFieldLabel?: boolean;
+              subFieldPlaceholder?: boolean;
+              subFieldType?: boolean;
+              subFieldRequired?: boolean;
+              id?: boolean;
+            };
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Layered Text On Image Section_select".
+ */
+export interface LayeredTextOnImageSectionSelect {
+  sectionTitle?: boolean;
+  sectionSubtitle?: boolean;
+  sectionBackground?: boolean;
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Illustration With Text and Carousel Section_select".
+ */
+export interface IllustrationWithTextAndCarouselSectionSelect {
+  sectionTitle?: boolean;
+  sectionDescription?: boolean;
+  carouselLists?:
+    | boolean
+    | {
+        carouselImage?: boolean;
+        carouselTitle?: boolean;
+        carouselDescription?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Image Header Paragraph Section_select".
+ */
+export interface ImageHeaderParagraphSectionSelect {
+  sectionImage?: boolean;
+  sectionTitle?: boolean;
+  sectionParagraph?: boolean;
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Image Header Three Column Section_select".
+ */
+export interface ImageHeaderThreeColumnSectionSelect {
+  sectionHeaderImage?: boolean;
+  sectionTitle?: boolean;
+  sectionSubtitle?: boolean;
+  gridLists?:
+    | boolean
+    | {
+        itemTitle?: boolean;
+        itemDescription?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Circle Image Grid Section_select".
+ */
+export interface CircleImageGridSectionSelect {
+  sectionTitle?: boolean;
+  gridLists?:
+    | boolean
+    | {
+        itemImage?: boolean;
+        itemName?: boolean;
+        itemDescription?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Text With Image Cluster Section_select".
+ */
+export interface TextWithImageClusterSectionSelect {
+  imageLists?:
+    | boolean
+    | {
+        itemImage?: boolean;
+        id?: boolean;
+      };
+  sectionHeadline?: boolean;
+  sectionTitle?: boolean;
+  sectionDescription?: boolean;
+  hasButton?: boolean;
+  buttonText?: boolean;
+  buttonIcon?: boolean;
+  buttonLink?: boolean;
+  buttonColor?: boolean;
+  reverseContent?: boolean;
+  hasBackground?: boolean;
+  backgroundColor?: boolean;
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Looping Carousel Section_select".
+ */
+export interface LoopingCarouselSectionSelect {
+  sectionTitle?: boolean;
+  carouselLists?:
+    | boolean
+    | {
+        itemImage?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "List With Icon Section_select".
+ */
+export interface ListWithIconSectionSelect {
+  sectionTitle?: boolean;
+  backgroundPageColor?: boolean;
+  contentLists?:
+    | boolean
+    | {
+        contentIcon?: boolean;
+        contentName?: boolean;
+        id?: boolean;
+      };
+  iconColor?: boolean;
+  backgroundIconColor?: boolean;
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Text Align Center Section_select".
+ */
+export interface TextAlignCenterSectionSelect {
+  sectionTitle?: boolean;
+  sectionDescription?: boolean;
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "List With Icon and Description Section_select".
+ */
+export interface ListWithIconAndDescriptionSectionSelect {
+  sectionTitle?: boolean;
+  backgroundPageColor?: boolean;
+  contentLists?:
+    | boolean
+    | {
+        contentIcon?: boolean;
+        contentName?: boolean;
+        contentDescription?: boolean;
+        id?: boolean;
+      };
+  iconColor?: boolean;
+  backgroundIconColor?: boolean;
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Two List With Illustration Section_select".
+ */
+export interface TwoListWithIllustrationSectionSelect {
+  sectionTitle?: boolean;
+  sectionDescription?: boolean;
+  sectionIllustration?: boolean;
+  leftSideListTitle?: boolean;
+  leftSideListTitleColor?: boolean;
+  leftSideListContentArray?:
+    | boolean
+    | {
+        leftSideListContent?: boolean;
+        id?: boolean;
+      };
+  leftSideListColor?: boolean;
+  rightSideListTitle?: boolean;
+  rightSideListTitleColor?: boolean;
+  rightSideListContentArray?:
+    | boolean
+    | {
+        rightSideListContent?: boolean;
+        id?: boolean;
+      };
+  rightSideListColor?: boolean;
+  hasButton?: boolean;
+  buttonText?: boolean;
+  buttonIcon?: boolean;
+  buttonLink?: boolean;
+  buttonColor?: boolean;
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Text Grid Section_select".
+ */
+export interface TextGridSectionSelect {
+  sectionTitle?: boolean;
+  sectionDescription?: boolean;
+  headerColor?: boolean;
+  gridArray?:
+    | boolean
+    | {
+        itemTitle?: boolean;
+        itemDescription?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Icon List With Side Images Section_select".
+ */
+export interface IconListWithSideImagesSectionSelect {
+  sectionTitle?: boolean;
+  sectionIllustrationArray?:
+    | boolean
+    | {
+        sectionIllustration?: boolean;
+        id?: boolean;
+      };
+  sectionContent?:
+    | boolean
+    | {
+        contentItem?:
+          | boolean
+          | {
+              itemImage?: boolean;
+              itemTitle?: boolean;
+              itemDescription?: boolean;
+              id?: boolean;
+              blockName?: boolean;
+            };
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Card With Image Section_select".
+ */
+export interface CardWithImageSectionSelect {
+  sectionTitle?: boolean;
+  headerColor?: boolean;
+  cardArray?:
+    | boolean
+    | {
+        itemThumbnail?: boolean;
+        itemTitle?: boolean;
+        itemDescription?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Icon Text List With Image Section_select".
+ */
+export interface IconTextListWithImageSectionSelect {
+  sectionTitle?: boolean;
+  sectionIllustration?: boolean;
+  contentLists?:
+    | boolean
+    | {
+        iconTextItem?:
+          | boolean
+          | {
+              itemIcon?: boolean;
+              itemTitle?: boolean;
+              itemDescription?: boolean;
+              id?: boolean;
+              blockName?: boolean;
+            };
+      };
+  iconColor?: boolean;
+  backgroundIconColor?: boolean;
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "3D Carousel Section_select".
+ */
+export interface DCarouselSectionSelect {
+  sectionTitle?: boolean;
+  carouselItems?:
+    | boolean
+    | {
+        carouselItem?:
+          | boolean
+          | {
+              itemTitle?: boolean;
+              itemDescription?: boolean;
+              itemIcon?: boolean;
+              id?: boolean;
+              blockName?: boolean;
+            };
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Grid Image Section_select".
+ */
+export interface GridImageSectionSelect {
+  sectionTitle?: boolean;
+  gridImage?:
+    | boolean
+    | {
+        image?: boolean;
+        imageDescription?: boolean;
+        id?: boolean;
+      };
+  id?: boolean;
+  blockName?: boolean;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navbar_select".
+ */
+export interface NavbarSelect<T extends boolean = true> {
+  active?: T;
+  layoutNavbar?: T;
+  navbarLogo?: T;
+  navbarItemArray?:
+    | T
+    | {
+        navbarItemName?: T;
+        navbarItemReference?: T;
+        hasDropdown?: T;
+        navbarDropdown?:
+          | T
+          | {
+              itemDropdownIcon?: T;
+              itemDropdownTitle?: T;
+              itemDropdownReference?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  accentColor?: T;
+  hasButtonContact?: T;
+  buttonContactReference?: T;
+  buttonContactColor?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  active?: T;
+  layoutFooter?: T;
+  footerLogo?: T;
+  footerTitle?: T;
+  footerDescription?: T;
+  footerNavigation?:
+    | T
+    | {
+        navigationGroupTitle?: T;
+        navigationGroupItem?:
+          | T
+          | {
+              navigationPageName?: T;
+              navigationPageReference?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reciveMessage_select".
+ */
+export interface ReciveMessageSelect<T extends boolean = true> {
+  recivedData?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -240,7 +1496,6 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -252,6 +1507,17 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "groupPage_select".
+ */
+export interface GroupPageSelect<T extends boolean = true> {
+  groupName?: T;
+  groupKey?: T;
+  subGroupFrom?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

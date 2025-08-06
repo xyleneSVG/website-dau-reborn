@@ -8,7 +8,12 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 import { Users } from './collections/Users'
-import { Media } from './collections/Media'
+import { Media } from './collections/storage/Media'
+import { GroupPage } from './collections/storage/GroupPage'
+import { ReciveMessage } from './collections/ReciveMessage'
+import { Pages } from './collections/Pages'
+import { Navbar } from './collections/Navbar'
+import { Footer } from './collections/Footer'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -19,8 +24,41 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    livePreview: {
+      url: ({ data, collectionConfig }) => {
+        if (collectionConfig?.slug === 'pages') {
+          const key = data?.pageKey?.startsWith('/') ? data.pageKey : `${data?.pageKey || ''}`
+          return `${process.env.NEXT_PUBLIC_SERVER_URL}${key}`
+        }
+        if (collectionConfig?.slug === 'navbar' || collectionConfig?.slug === 'footer') {
+          return `${process.env.NEXT_PUBLIC_SERVER_URL}`
+        }
+        return process.env.NEXT_PUBLIC_SERVER_URL || ''
+      },
+      collections: ['pages', 'navbar', 'footer'],
+    },
   },
-  collections: [Users, Media],
+  collections: [Pages, Navbar, Footer, ReciveMessage, Users, Media, GroupPage],
+  localization: {
+    locales: [
+      {
+        label: {
+          en: 'English',
+          id: 'Inggris',
+        },
+        code: 'en',
+      },
+      {
+        label: {
+          en: 'Indonesia',
+          id: 'Indonesia',
+        },
+        code: 'id',
+      },
+    ],
+    defaultLocale: 'id',
+    fallback: false,
+  },
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
