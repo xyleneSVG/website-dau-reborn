@@ -2,13 +2,14 @@
 'use client'
 
 import { useLivePreview } from '@payloadcms/live-preview-react'
-import { JSX, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import {
   Phone,
   ArrowRight,
   ChevronRight,
+  LucideIcon,
   Server,
   FileCode2,
   CodeXml,
@@ -33,7 +34,6 @@ import {
   UserStar,
   Smartphone,
   PencilRuler,
-  LucideIcon,
 } from 'lucide-react'
 
 // components
@@ -73,85 +73,10 @@ interface DynamicPageProps {
   slug: string
 }
 
+// functions
 import { getDataPages } from '../_functions/getDataPages'
 import { getDataNavbar } from '../_functions/getDataNavbar'
 import { getDataFooter } from '../_functions/getDataFooter'
-
-const iconMap: Record<string, LucideIcon> = {
-  phone: Phone,
-  arrowright: ArrowRight,
-  chevronright: ChevronRight,
-  server: Server,
-  filecode2: FileCode2,
-  codexml: CodeXml,
-  puzzle: Puzzle,
-  badgecheck: BadgeCheck,
-  shuffle: Shuffle,
-  lockkeyhole: LockKeyhole,
-  file: File,
-  users: Users,
-  filesearch: FileSearch,
-  database: Database,
-  shieldcheck: ShieldCheck,
-  rocket: Rocket,
-  waypoints: Waypoints,
-  chartpie: ChartPie,
-  usercog: UserCog,
-  filepenline: FilePenLine,
-  monitorcog: MonitorCog,
-  appwindow: AppWindow,
-  earthlock: EarthLock,
-  cloudy: Cloudy,
-  userstar: UserStar,
-  smartphone: Smartphone,
-  pencilruler: PencilRuler,
-}
-
-function getLucideIcon(name?: string): LucideIcon | null {
-  if (!name) return null
-  return iconMap[name.toLowerCase()] || null
-}
-
-const sectionComponentMap: Record<
-  string,
-  (props: { data: any; getLucideIcon: (name?: string) => LucideIcon | null }) => JSX.Element
-> = {
-  heroSection: ({ data }) => <Hero data={data} />,
-  zigZagListSection: ({ data }) => <ZigZagList data={data} />,
-  imageWithCarouselSection: ({ data }) => <ImageWithCarousel data={data} />,
-  quadGridSection: ({ data }) => <QuadGrid data={data} />,
-  imageGridCarouselSection: ({ data }) => <ImageGridCarousel data={data} />,
-  contactSection: ({ data }) => <Contact data={data} />,
-  layeredTextOnImageSection: ({ data }) => <LayeredTextOnImage data={data} />,
-  illustrationWithTextAndCarouselSection: ({ data }) => (
-    <IllustrationWithTextAndCarousel data={data} />
-  ),
-  imageHeaderParagraphSection: ({ data }) => <ImageHeaderParagraph data={data} />,
-  imageHeaderThreeColumnSection: ({ data }) => <ImageHeaderThreeCard data={data} />,
-  circleImageGridSection: ({ data }) => <CircleImageGrid data={data} />,
-  textWithImageClusterSection: ({ data, getLucideIcon }) => (
-    <TextWithImageCluster data={data} getLucideIcon={getLucideIcon} />
-  ),
-  loopingCarouselSection: ({ data }) => <LoopingCarousel data={data} />,
-  listWithIconSection: ({ data, getLucideIcon }) => (
-    <ListWithIcon data={data} getLucideIcon={getLucideIcon} />
-  ),
-  textAlignCenterSection: ({ data }) => <TextAlignCenter data={data} />,
-  listWithIconDescriptionSection: ({ data, getLucideIcon }) => (
-    <ListWithIconAndDescription data={data} getLucideIcon={getLucideIcon} />
-  ),
-  twoListWithIllustrationSection: ({ data, getLucideIcon }) => (
-    <TwoListWithIllustration data={data} getLucideIcon={getLucideIcon} />
-  ),
-  textGridSection: ({ data }) => <TextGrid data={data} />,
-  iconListWithSideImagesSection: ({ data }) => <IconListWithSideImages data={data} />,
-  cardWithImageSection: ({ data }) => <CardWithImageSection data={data} />,
-  iconTextListWithImageSection: ({ data, getLucideIcon }) => (
-    <IconTextListWithImage data={data} getLucideIcon={getLucideIcon} />
-  ),
-  threeDimensionCarouselSection: ({ data }) => <ThreeDimensionCarousel data={data} />,
-  gridImageSection: ({ data }) => <GridImage data={data} />,
-}
 
 export default function DynamicPage({ slug }: DynamicPageProps) {
   const [loading, setLoading] = useState(true)
@@ -159,6 +84,40 @@ export default function DynamicPage({ slug }: DynamicPageProps) {
   const [fetchedPage, setFetchedPage] = useState<Page | null>(null)
   const [fetchedNavbar, setFetchedNavbar] = useState<Navbar | null>(null)
   const [fetchedFooter, setFetchedFooter] = useState<Footer | null>(null)
+  const iconMap: Record<string, LucideIcon> = {
+    phone: Phone,
+    arrowright: ArrowRight,
+    chevronright: ChevronRight,
+    server: Server,
+    filecode2: FileCode2,
+    codexml: CodeXml,
+    puzzle: Puzzle,
+    badgecheck: BadgeCheck,
+    shuffle: Shuffle,
+    lockkeyhole: LockKeyhole,
+    file: File,
+    users: Users,
+    filesearch: FileSearch,
+    database: Database,
+    shieldcheck: ShieldCheck,
+    rocket: Rocket,
+    waypoints: Waypoints,
+    chartpie: ChartPie,
+    usercog: UserCog,
+    filepenline: FilePenLine,
+    monitorcog: MonitorCog,
+    appwindow: AppWindow,
+    earthlock: EarthLock,
+    cloudy: Cloudy,
+    userstar: UserStar,
+    smartphone: Smartphone,
+    pencilruler: PencilRuler,
+  }
+
+  function getLucideIcon(name?: string): LucideIcon | null {
+    if (!name) return null
+    return iconMap[name.toLowerCase()] || null
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -172,9 +131,9 @@ export default function DynamicPage({ slug }: DynamicPageProps) {
           return
         }
 
-        setFetchedPage(result[0] as Page)
-        setFetchedNavbar(navbarData as Navbar)
-        setFetchedFooter(footerData as Footer)
+        setFetchedPage(result[0] as unknown as Page)
+        setFetchedNavbar(navbarData as unknown as Navbar)
+        setFetchedFooter(footerData as unknown as Footer)
       } catch (err) {
         console.error(err)
         setNotFound(true)
@@ -209,9 +168,58 @@ export default function DynamicPage({ slug }: DynamicPageProps) {
   const footerData = { ...fetchedFooter, ...livePreviewFooter }
 
   const renderSection = (section: any, index: number) => {
-    const Component = sectionComponentMap[section.blockType]
-    if (!Component) return <NotFound key={index} />
-    return <Component key={index} data={section} getLucideIcon={getLucideIcon} />
+    switch (section.blockType) {
+      case 'heroSection':
+        return <Hero key={index} data={section} />
+      case 'zigZagListSection':
+        return <ZigZagList key={index} data={section} />
+      case 'imageWithCarouselSection':
+        return <ImageWithCarousel key={index} data={section} />
+      case 'quadGridSection':
+        return <QuadGrid key={index} data={section} />
+      case 'imageGridCarouselSection':
+        return <ImageGridCarousel key={index} data={section} />
+      case 'contactSection':
+        return <Contact key={index} data={section} />
+      case 'layeredTextOnImageSection':
+        return <LayeredTextOnImage key={index} data={section} />
+      case 'illustrationWithTextAndCarouselSection':
+        return <IllustrationWithTextAndCarousel key={index} data={section} />
+      case 'imageHeaderParagraphSection':
+        return <ImageHeaderParagraph key={index} data={section} />
+      case 'imageHeaderThreeColumnSection':
+        return <ImageHeaderThreeCard key={index} data={section} />
+      case 'circleImageGridSection':
+        return <CircleImageGrid key={index} data={section} />
+      case 'textWithImageClusterSection':
+        return <TextWithImageCluster key={index} data={section} getLucideIcon={getLucideIcon} />
+      case 'loopingCarouselSection':
+        return <LoopingCarousel key={index} data={section} />
+      case 'listWithIconSection':
+        return <ListWithIcon key={index} data={section} getLucideIcon={getLucideIcon} />
+      case 'textAlignCenterSection':
+        return <TextAlignCenter key={index} data={section} />
+      case 'listWithIconDescriptionSection':
+        return (
+          <ListWithIconAndDescription key={index} data={section} getLucideIcon={getLucideIcon} />
+        )
+      case 'twoListWithIllustrationSection':
+        return <TwoListWithIllustration key={index} data={section} getLucideIcon={getLucideIcon} />
+      case 'textGridSection':
+        return <TextGrid key={index} data={section} />
+      case 'iconListWithSideImagesSection':
+        return <IconListWithSideImages key={index} data={section} />
+      case 'cardWithImageSection':
+        return <CardWithImageSection key={index} data={section} />
+      case 'iconTextListWithImageSection':
+        return <IconTextListWithImage key={index} data={section} getLucideIcon={getLucideIcon} />
+      case 'threeDimensionCarouselSection':
+        return <ThreeDimensionCarousel key={index} data={section} />
+      case 'gridImageSection':
+        return <GridImage key={index} data={section} />
+      default:
+        return <NotFound />
+    }
   }
 
   if (loading) {
@@ -239,7 +247,12 @@ export default function DynamicPage({ slug }: DynamicPageProps) {
       )}
       <GoogleReCaptchaProvider
         reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-        scriptProps={{ async: true, defer: true, appendTo: 'head', nonce: undefined }}
+        scriptProps={{
+          async: true,
+          defer: true,
+          appendTo: 'head',
+          nonce: undefined,
+        }}
       >
         {pageData.pageSection?.map((section, index) => renderSection(section, index))}
       </GoogleReCaptchaProvider>
