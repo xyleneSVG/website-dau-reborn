@@ -114,6 +114,9 @@ export default function DynamicPage({ slug }: DynamicPageProps) {
     pencilruler: PencilRuler,
   }
 
+  const STORAGE_URL = `${process.env.NEXT_PUBLIC_S3_ENDPOINT}/${process.env.NEXT_PUBLIC_S3_BUCKET}/`
+  console.log(STORAGE_URL)
+
   function getLucideIcon(name?: string): LucideIcon | null {
     if (!name) return null
     return iconMap[name.toLowerCase()] || null
@@ -170,11 +173,11 @@ export default function DynamicPage({ slug }: DynamicPageProps) {
   const renderSection = (section: any, index: number) => {
     switch (section.blockType) {
       case 'heroSection':
-        return <Hero key={index} data={section} />
+        return <Hero key={index} data={section} storage={STORAGE_URL} />
       case 'zigZagListSection':
-        return <ZigZagList key={index} data={section} />
+        return <ZigZagList key={index} data={section} storage={STORAGE_URL} />
       case 'imageWithCarouselSection':
-        return <ImageWithCarousel key={index} data={section} />
+        return <ImageWithCarousel key={index} data={section} storage={STORAGE_URL} />
       case 'quadGridSection':
         return <QuadGrid key={index} data={section} />
       case 'imageGridCarouselSection':

@@ -16,11 +16,12 @@ import { Media, Page, ZigZagListsSection } from '@/payload-types'
 import { useSearchParams } from 'next/navigation'
 export type ContentList = ZigZagListsSection['contentLists'][number]
 
-interface ZigZagListProps {
+interface Props {
   data: ZigZagListsSection
+  storage: string
 }
 
-export default function ZigZagList({ data }: ZigZagListProps) {
+export default function ZigZagList({ data, storage }: Props) {
   const searchParams = useSearchParams()
   const localeParam = searchParams?.get('locale')
   return (
@@ -64,9 +65,9 @@ export default function ZigZagList({ data }: ZigZagListProps) {
               key={item.id}
               className={`flex flex-col gap-y-6 items-center max-md:max-w-[440px] ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} md:justify-start md:items-center lg:w-[1000px] md:gap-x-6 2xl:gap-x-12 2xl:w-[1200px]`}
             >
-              {(item.contentListIcon as Media)?.url && (
+              {(item?.contentListIcon as Media)?.filename && (
                 <Image
-                  src={(item.contentListIcon as Media).url ?? ''}
+                  src={`${storage}${(item.contentListIcon as Media).filename}`}
                   width={0}
                   height={0}
                   alt=""

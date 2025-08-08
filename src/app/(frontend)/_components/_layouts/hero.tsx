@@ -13,13 +13,16 @@ import { Circle } from 'lucide-react'
 // interface
 import { HeroSection, Media } from '@/payload-types'
 
-export default function Hero({ data }: { data: HeroSection }) {
+export default function Hero({ data, storage }: { data: HeroSection; storage: string }) {
+  const illustrationLeftFilename = (data?.greetingIllustrationLeft as Media)?.filename
+  console.log('p:', illustrationLeftFilename ? storage + illustrationLeftFilename : 'no filename')
+
   const greetings = Array.isArray(data?.greetings)
     ? data.greetings.map((item) => {
         const img = item.imageGreeting as Media
         return {
           type: item.hasIncludeImage ? 'image-text' : 'text',
-          image: item.hasIncludeImage && img?.url ? img.url : null,
+          image: item.hasIncludeImage && img?.filename ? storage + img.filename : null,
           text: item.textGreeting,
         }
       })
@@ -54,9 +57,9 @@ export default function Hero({ data }: { data: HeroSection }) {
         />
         <div className="flex flex-col w-full items-center gap-y-1 mb-4 md:flex-row md:justify-between md:items-end md:gap-x-6 xl:gap-10">
           <div className="hidden lg:block lg:w-[25%] aspect-square relative">
-            {illustrationLeft?.url && (
+            {illustrationLeft?.filename && (
               <Image
-                src={illustrationLeft.url}
+                src={storage + illustrationLeft.filename}
                 alt="Illustration Left"
                 fill
                 className="object-contain"
@@ -82,9 +85,9 @@ export default function Hero({ data }: { data: HeroSection }) {
           </div>
 
           <div className="w-[80%] lg:w-[37%] aspect-square relative">
-            {illustrationRight?.url && (
+            {illustrationRight?.filename && (
               <Image
-                src={illustrationRight.url}
+                src={storage + illustrationRight.filename}
                 alt="Illustration Right"
                 fill
                 className="object-contain"

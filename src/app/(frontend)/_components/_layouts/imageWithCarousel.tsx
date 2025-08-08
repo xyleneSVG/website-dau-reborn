@@ -11,9 +11,10 @@ import { ImageWithCarouselSection, Media } from '@/payload-types'
 
 interface Props {
   data: ImageWithCarouselSection
+  storage: string
 }
 
-export default function ImageWithCarousel({ data }: Props) {
+export default function ImageWithCarousel({ data, storage }: Props) {
   const [visibleCount, setVisibleCount] = useState(3)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [clonedItems, setClonedItems] = useState<any[]>([])
@@ -86,11 +87,11 @@ export default function ImageWithCarousel({ data }: Props) {
               {data.sectionDescription}
             </p>
           </div>
-          {(data.sectionIllustration as Media)?.url && (
+          {(data?.sectionIllustration as Media)?.filename && (
             <Image
               width={0}
               height={0}
-              src={(data.sectionIllustration as Media).url ?? ""}
+              src={`${storage}${(data.sectionIllustration as Media).filename}`}
               alt=""
               className="w-max h-auto mx-auto sm:w-[440px] lg:w-[560px] xl:w-[740px] 2xl:w-[850px]"
             />
@@ -124,9 +125,9 @@ export default function ImageWithCarousel({ data }: Props) {
                     style={{ width: `${100 / clonedItems.length}%` }}
                   >
                     <div className="size-14 rounded-2xl bg-white flex justify-center items-center sm:size-16 lg:size-20 xl:size-23 2xl:size-32 mx-auto">
-                      {(item?.itemImage as Media)?.url && (
+                      {(item?.itemImage as Media)?.filename && (
                         <Image
-                          src={(item?.itemImage as Media)?.url ?? ''}
+                          src={`${storage}${(item?.itemImage as Media)?.filename}`}
                           alt={''}
                           width={40}
                           height={40}

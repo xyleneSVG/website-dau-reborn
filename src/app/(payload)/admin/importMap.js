@@ -26,6 +26,7 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { IconPickerFieldComponent as IconPickerFieldComponent_d9823501c0742f88e9fd2fbf482c1246 } from '@innovixx/payload-icon-picker-field/components'
 import { default as default_c92c455f774f1b933e94bdc8becbb7df } from '@/admin/_components/example-of-change/reverseContentTextWithImageCluster'
 import { default as default_4dc88c0688eaa107b3eb9ae61d90c0ca } from 'src/admin/_components/recivedMessageFromJson.tsx'
+import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
   "@/admin/_components/instruction#default": default_db5bc2afdc5bdd8845ab83b840a4dfaa,
@@ -55,5 +56,6 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@innovixx/payload-icon-picker-field/components#IconPickerFieldComponent": IconPickerFieldComponent_d9823501c0742f88e9fd2fbf482c1246,
   "@/admin/_components/example-of-change/reverseContentTextWithImageCluster#default": default_c92c455f774f1b933e94bdc8becbb7df,
-  "src/admin/_components/recivedMessageFromJson.tsx#default": default_4dc88c0688eaa107b3eb9ae61d90c0ca
+  "src/admin/_components/recivedMessageFromJson.tsx#default": default_4dc88c0688eaa107b3eb9ae61d90c0ca,
+  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }
